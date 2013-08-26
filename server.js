@@ -14,6 +14,7 @@ app.get('/sessions/:id', sessions.findById);
 app.get('/sessions', sessions.findAll);
 app.post('/sessions', sessions.create);
 app.put('/sessions', sessions.update);
+app.delete('/sessions', sessions.destroy);
 
 app.listen(12345);
 console.log('Listening on port 12345...');

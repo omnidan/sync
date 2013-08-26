@@ -76,3 +76,20 @@ exports.update = function(req, res) {
         res.jsonp({success: false, message: 'No data.'})
     }
 };
+
+exports.destroy = function(req, res) {
+    if (!req.body.id) {
+        res.jsonp({success: false, message: 'No ID.'})
+        return;
+    }
+    
+    collection.remove({_id: database.ObjectID(req.body.id)}, {w: 1}, function(err, removedDocs) {
+        if (err) {
+            console.log('Errors while removing document: ' + JSON.stringify(err));
+            res.jsonp({success: false, errors: err, message: 'Failed to destroy session (does it exist?).'})
+        } else {
+            console.log('Removed record "' + req.body.id + '".');
+            res.jsonp({success: true, message: 'Successfully destroyed session.'})
+        }
+    });
+};
