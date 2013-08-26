@@ -27,11 +27,12 @@ exports.findById = function(data) {
         return {type: 'result', data: {}};
     }
     
+    var result = {};
     database.findOneById(collection, req.params.id, function(err, item) {
-        return {type: 'result', data: item};
+        result = {type: 'result', data: item};
     });
     
-    return {type: 'result'};
+    return result;
 };
 
 exports.findAll = function(data) {
@@ -39,24 +40,27 @@ exports.findAll = function(data) {
         return {type: 'result', data: []};
     }
     
+    var result = {};
     collection.find().toArray(function(err, items) {
-        return {type: 'result', data: items};
+        result = {type: 'result', data: items};
     });
     
-    return {type: 'result', data: []};
+    return result;
 };
 
 exports.create = function(data) {
     if (data.data) {
+        var result = {};
         collection.insert({data: data.data}, {safe: true}, function(err, records) {
             if (err) {
                 console.log('Errors while inserting document: ' + JSON.stringify(err));
-                return {type: 'message', data: {success: false, errors: err, message: 'Failed to create new session.'}};
+                result = {type: 'message', data: {success: false, errors: err, message: 'Failed to create new session.'}};
             } else {
                 console.log('Inserted record: ' + JSON.stringify(records[0]));
-                return {type: 'message', data: {success: true, message: 'Successfully created new session.'}};
+                result = {type: 'message', data: {success: true, message: 'Successfully created new session.'}};
             }
         });
+        return result;
     }
     
     return {type: 'message', data: {success: false, message: 'No data.'}};
@@ -68,15 +72,17 @@ exports.update = function(data) {
     }
     
     if (data.data) {
+        var result = {};
         collection.update({_id: database.ObjectID(data.id)}, {data: data.data}, {safe: true}, function(err) {
             if (err) {
                 console.log('Errors while updating document: ' + JSON.stringify(err));
-                return {type: 'message', data: {success: false, errors: err, message: 'Failed to update session (does it exist?).'}};
+                result = {type: 'message', data: {success: false, errors: err, message: 'Failed to update session (does it exist?).'}};
             } else {
                 console.log('Updated record "' + data.id + '".');
-                return {type: 'message', data: {success: true, message: 'Successfully updated session.'}};
+                result = {type: 'message', data: {success: true, message: 'Successfully updated session.'}};
             }
         });
+        return result;
     }
     
     return {type: 'message', data: {success: false, message: 'No data.'}};
@@ -87,15 +93,16 @@ exports.destroy = function(data) {
         return {type: 'message', data: {success: false, message: 'No ID.'}};
     }
     
+    var result = {};
     collection.remove({_id: database.ObjectID(data.id)}, {w: 1}, function(err, removedDocs) {
         if (err) {
             console.log('Errors while removing document: ' + JSON.stringify(err));
-            return {type: 'message', data: {success: false, errors: err, message: 'Failed to destroy session (does it exist?).'}};
+            result = {type: 'message', data: {success: false, errors: err, message: 'Failed to destroy session (does it exist?).'}};
         } else {
             console.log('Removed record "' + data.id + '".');
-            return {type: 'message', data: {success: true, message: 'Successfully destroyed session.'}};
+            result = {type: 'message', data: {success: true, message: 'Successfully destroyed session.'}};
         }
     });
     
-    return {type: 'message', data: {success: false, message: 'Unknown error.'}};
+    return result;
 };
