@@ -19,7 +19,7 @@ var db = database.createDB('sync', function(err, _collection) {
 });
 
 exports.version = function(data) {
-    return {type: 'result', data: {name: 'TouchLay Sync', version: '0.0.1'}};
+    return {type: 'version', data: {name: 'TouchLay Sync', version: '0.0.1'}};
 };
 
 exports.findById = function(data) {
@@ -37,12 +37,12 @@ exports.findById = function(data) {
 
 exports.findAll = function(data) {
     if (!collection) {
-        return {type: 'result', data: []};
+        return {type: 'results', data: []};
     }
     
     var result = {};
     collection.find().toArray(function(err, items) {
-        result = {type: 'result', data: items};
+        result = {type: 'results', data: items};
     });
     
     return result;
