@@ -1,16 +1,21 @@
-var sessions = require('./session'),
-    root = require('./root');
-
 var io = require('socket.io').listen(12345);
 console.log('Listening on port 12345...');
+
+var requests = require('./requests');
  
 // TODO: Authentication
 
+function bind(socket, key, func) {
+    socket.on(key, function(data) {
+        io.sockets.emit('message', func(data));
+    });
+}
+
 io.sockets.on('connection', function (socket) {
-    socket.on('version', root.version);
-    socket.on('getAll', sessions.findAll);
-    socket.on('get', sessions.findById);
-    socket.on('create', sessions.create);
-    socket.on('destroy', sessions.destroy);
-    socket.on('update', sessions.update);
+    bind(socket, 'version', requests.version);
+    bind(socket, 'getAll', requests.findAll);
+    bind(socket, 'get', requests.findById);
+    bind(socket, 'create', requests.create);
+    bind(socket, 'destroy', requests.destroy);
+    bind(socket, 'update', requests.update);
 });
