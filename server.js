@@ -18,5 +18,5 @@ app.delete('/sessions', sessions.destroy);
 app.put('/sessions/:id', sessions.update);
 app.delete('/sessions/:id', sessions.destroy);
 
-app.listen(12345);
+var io = require('socket.io').listen(app.listen(12345));
 console.log('Listening on port 12345...');
