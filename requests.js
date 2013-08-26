@@ -51,7 +51,7 @@ exports.create = function(data, emit) {
                 emit({type: 'message', data: {success: false, errors: err, message: 'Failed to create new session.'}});
             } else {
                 console.log('Inserted record: ' + JSON.stringify(records[0]));
-                emit({type: 'message', data: {success: true, message: 'Successfully created new session.'}});
+                emit({type: 'message', data: {id: records[0].id, success: true, message: 'Successfully created new session.'}});
             }
         });
         return;
@@ -72,7 +72,7 @@ exports.update = function(data, emit) {
                 emit({type: 'message', data: {success: false, errors: err, message: 'Failed to update session (does it exist?).'}});
             } else {
                 console.log('Updated record "' + data.id + '".');
-                emit({type: 'message', data: {success: true, message: 'Successfully updated session.'}});
+                emit({type: 'message', data: {id: records[0].id, success: true, message: 'Successfully updated session.'}});
             }
         });
         return;
@@ -92,7 +92,7 @@ exports.destroy = function(data, emit) {
             emit({type: 'message', data: {success: false, errors: err, message: 'Failed to destroy session (does it exist?).'}});
         } else {
             console.log('Removed record "' + data.id + '".');
-            emit({type: 'message', data: {success: true, message: 'Successfully destroyed session.'}});
+            emit({type: 'message', data: {id: data.id, success: true, message: 'Successfully destroyed session.'}});
         }
     });
 };
