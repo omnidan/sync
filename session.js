@@ -57,18 +57,22 @@ exports.create = function(req, res) {
 };
 
 exports.update = function(req, res) {
-    if (!req.body.id) {
-        res.jsonp({success: false, message: 'No ID.'})
-        return;
+    id = req.params.id;
+    if (!req.params.id) {
+        id = req.body.id;
+        if (!req.body.id) {
+            res.jsonp({success: false, message: 'No ID.'})
+            return;
+        }
     }
     
     if (req.body.data) {
-        collection.update({_id: database.ObjectID(req.body.id)}, {data: req.body.data}, {safe: true}, function(err) {
+        collection.update({_id: database.ObjectID(id)}, {data: req.body.data}, {safe: true}, function(err) {
             if (err) {
                 console.log('Errors while updating document: ' + JSON.stringify(err));
                 res.jsonp({success: false, errors: err, message: 'Failed to update session (does it exist?).'})
             } else {
-                console.log('Updated record "' + req.body.id + '".');
+                console.log('Updated record "' + id + '".');
                 res.jsonp({success: true, message: 'Successfully updated session.'})
             }
         });
@@ -78,17 +82,21 @@ exports.update = function(req, res) {
 };
 
 exports.destroy = function(req, res) {
-    if (!req.body.id) {
-        res.jsonp({success: false, message: 'No ID.'})
-        return;
+    id = req.params.id;
+    if (!req.params.id) {
+        id = req.body.id;
+        if (!req.body.id) {
+            res.jsonp({success: false, message: 'No ID.'})
+            return;
+        }
     }
     
-    collection.remove({_id: database.ObjectID(req.body.id)}, {w: 1}, function(err, removedDocs) {
+    collection.remove({_id: database.ObjectID(id)}, {w: 1}, function(err, removedDocs) {
         if (err) {
             console.log('Errors while removing document: ' + JSON.stringify(err));
             res.jsonp({success: false, errors: err, message: 'Failed to destroy session (does it exist?).'})
         } else {
-            console.log('Removed record "' + req.body.id + '".');
+            console.log('Removed record "' + id + '".');
             res.jsonp({success: true, message: 'Successfully destroyed session.'})
         }
     });
