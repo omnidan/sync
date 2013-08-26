@@ -43,7 +43,7 @@ exports.findAll = function(data) {
         return items;
     });
     
-    return {};
+    return [];
 };
 
 exports.create = function(data) {
