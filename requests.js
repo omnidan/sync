@@ -27,7 +27,7 @@ exports.findById = function(data, emit) {
         emit({type: 'result', data: {}});
     }
     
-    database.findOneById(collection, req.params.id, function(err, item) {
+    database.findOneById(collection, data.id, function(err, item) {
         emit({type: 'result', data: item});
     });
 };
