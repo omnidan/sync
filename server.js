@@ -7,7 +7,7 @@ var requests = require('./requests');
 
 function bind(socket, key, func) {
     socket.on(key, function(data) {
-        io.sockets.emit('message', func(data));
+        func(data, function(_data) { io.sockets.emit('message', _data); });
     });
 }
 

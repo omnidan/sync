@@ -18,91 +18,81 @@ var db = database.createDB('sync', function(err, _collection) {
     } else collection = _collection;
 });
 
-exports.version = function(data) {
-    return {type: 'version', data: {name: 'TouchLay Sync', version: '0.0.1'}};
+exports.version = function(data, emit) {
+    emit({type: 'version', data: {name: 'TouchLay Sync', version: '0.0.1'}});
 };
 
-exports.findById = function(data) {
+exports.findById = function(data, emit) {
     if (!collection) {
-        return {type: 'result', data: {}};
+        emit({type: 'result', data: {}});
     }
     
-    var result = {};
     database.findOneById(collection, req.params.id, function(err, item) {
-        result = {type: 'result', data: item};
+        emit({type: 'result', data: item});
     });
-    
-    return result;
 };
 
-exports.findAll = function(data) {
+exports.findAll = function(data, emit) {
     if (!collection) {
-        return {type: 'results', data: []};
+        emit({type: 'results', data: []});
     }
     
     var result = {};
     collection.find().toArray(function(err, items) {
-        result = {type: 'results', data: items};
+        emit({type: 'results', data: items});
     });
-    
-    return result;
 };
 
-exports.create = function(data) {
+exports.create = function(data, emit) {
     if (data.data) {
-        var result = {};
         collection.insert({data: data.data}, {safe: true}, function(err, records) {
             if (err) {
                 console.log('Errors while inserting document: ' + JSON.stringify(err));
-                result = {type: 'message', data: {success: false, errors: err, message: 'Failed to create new session.'}};
+                emit({type: 'message', data: {success: false, errors: err, message: 'Failed to create new session.'}});
             } else {
                 console.log('Inserted record: ' + JSON.stringify(records[0]));
-                result = {type: 'message', data: {success: true, message: 'Successfully created new session.'}};
+                emit({type: 'message', data: {success: true, message: 'Successfully created new session.'}});
             }
         });
-        return result;
+        return;
     }
     
-    return {type: 'message', data: {success: false, message: 'No data.'}};
+    emit({type: 'message', data: {success: false, message: 'No data.'}});
 };
 
-exports.update = function(data) {
+exports.update = function(data, emit) {
     if (!data.id) {
-        return {type: 'message', data: {success: false, message: 'No ID.'}};
+        emit({type: 'message', data: {success: false, message: 'No ID.'}});
     }
     
     if (data.data) {
-        var result = {};
         collection.update({_id: database.ObjectID(data.id)}, {data: data.data}, {safe: true}, function(err) {
             if (err) {
                 console.log('Errors while updating document: ' + JSON.stringify(err));
-                result = {type: 'message', data: {success: false, errors: err, message: 'Failed to update session (does it exist?).'}};
+                emit({type: 'message', data: {success: false, errors: err, message: 'Failed to update session (does it exist?).'}});
             } else {
                 console.log('Updated record "' + data.id + '".');
-                result = {type: 'message', data: {success: true, message: 'Successfully updated session.'}};
+                emit({type: 'message', data: {success: true, message: 'Successfully updated session.'}});
             }
         });
-        return result;
+        return;
     }
     
-    return {type: 'message', data: {success: false, message: 'No data.'}};
+    emit({type: 'message', data: {success: false, message: 'No data.'}});
 };
 
-exports.destroy = function(data) {
+exports.destroy = function(data, emit) {
     if (!data.id) {
-        return {type: 'message', data: {success: false, message: 'No ID.'}};
+        emit({type: 'message', data: {success: false, message: 'No ID.'}});
     }
     
-    var result = {};
     collection.remove({_id: database.ObjectID(data.id)}, {w: 1}, function(err, removedDocs) {
         if (err) {
             console.log('Errors while removing document: ' + JSON.stringify(err));
-            result = {type: 'message', data: {success: false, errors: err, message: 'Failed to destroy session (does it exist?).'}};
+            emit({type: 'message', data: {success: false, errors: err, message: 'Failed to destroy session (does it exist?).'}});
         } else {
             console.log('Removed record "' + data.id + '".');
-            result = {type: 'message', data: {success: true, message: 'Successfully destroyed session.'}};
+            emit({type: 'message', data: {success: true, message: 'Successfully destroyed session.'}});
         }
     });
-    
-    return result;
 };
