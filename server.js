@@ -1,22 +1,16 @@
-var express = require('express'),
-    sessions = require('./session'),
+var sessions = require('./session'),
     root = require('./root');
+
+var io = require('socket.io').listen(12345);
+console.log('Listening on port 12345...');
  
-var app = express();
-
-app.use(express.bodyParser());
-
 // TODO: Authentication
 
-app.get('/', root.root);
-app.get('/version', root.version);
-app.get('/sessions/:id', sessions.findById);
-app.get('/sessions', sessions.findAll);
-app.post('/sessions', sessions.create);
-app.put('/sessions', sessions.update);
-app.delete('/sessions', sessions.destroy);
-app.put('/sessions/:id', sessions.update);
-app.delete('/sessions/:id', sessions.destroy);
-
-var io = require('socket.io').listen(app.listen(12345));
-console.log('Listening on port 12345...');
+io.sockets.on('connection', function (socket) {
+    socket.on('version', root.version);
+    socket.on('getAll', sessions.findAll);
+    socket.on('get', sessions.findById);
+    socket.on('create', sessions.create);
+    socket.on('destroy', sessions.destroy);
+    socket.on('update', sessions.update);
+});

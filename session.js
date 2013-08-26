@@ -18,50 +18,50 @@ var db = database.createDB('sessions', function(err, _collection) {
     } else collection = _collection;
 });
 
-exports.findById = function(req, res) {
+exports.findById = function(data) {
     if (!collection) {
-        res.jsonp({});
+        io.sockets.emit('message', {});
         return;
     }
     
     database.findOneById(collection, req.params.id, function(err, item) {
-        res.jsonp(item);
+        io.sockets.emit('message', item);
     });
 };
 
-exports.findAll = function(req, res) {
+exports.findAll = function(data) {
     if (!collection) {
-        res.jsonp([]);
+        io.sockets.emit('message', []);
         return;
     }
     
     collection.find().toArray(function(err, items) {
-        res.jsonp(items);
+        io.sockets.emit('message', items);
     });
 };
 
-exports.create = function(req, res) {
+exports.create = function(data) {
     if (req.body.data) {
         collection.insert({data: req.body.data}, {safe: true}, function(err, records) {
             if (err) {
                 console.log('Errors while inserting document: ' + JSON.stringify(err));
-                res.jsonp({success: false, errors: err, message: 'Failed to create new session.'})
+                io.sockets.emit('message', {success: false, errors: err, message: 'Failed to create new session.'});
             } else {
                 console.log('Inserted record: ' + JSON.stringify(records[0]));
-                res.jsonp({success: true, message: 'Successfully created new session.'})
+                io.sockets.emit('message', {success: true, message: 'Successfully created new session.'});
             }
         });
     } else {
-        res.jsonp({success: false, message: 'No data.'})
+        io.sockets.emit('message', {success: false, message: 'No data.'});
     }
 };
 
-exports.update = function(req, res) {
+exports.update = function(data) {
     id = req.params.id;
     if (!req.params.id) {
         id = req.body.id;
         if (!req.body.id) {
-            res.jsonp({success: false, message: 'No ID.'})
+            io.sockets.emit('message', {success: false, message: 'No ID.'});
             return;
         }
     }
@@ -70,23 +70,23 @@ exports.update = function(req, res) {
         collection.update({_id: database.ObjectID(id)}, {data: req.body.data}, {safe: true}, function(err) {
             if (err) {
                 console.log('Errors while updating document: ' + JSON.stringify(err));
-                res.jsonp({success: false, errors: err, message: 'Failed to update session (does it exist?).'})
+                io.sockets.emit('message', {success: false, errors: err, message: 'Failed to update session (does it exist?).'});
             } else {
                 console.log('Updated record "' + id + '".');
-                res.jsonp({success: true, message: 'Successfully updated session.'})
+                io.sockets.emit('message', {success: true, message: 'Successfully updated session.'});
             }
         });
     } else {
-        res.jsonp({success: false, message: 'No data.'})
+        io.sockets.emit('message', {success: false, message: 'No data.'});
     }
 };
 
-exports.destroy = function(req, res) {
+exports.destroy = function(data) {
     id = req.params.id;
     if (!req.params.id) {
         id = req.body.id;
         if (!req.body.id) {
-            res.jsonp({success: false, message: 'No ID.'})
+            io.sockets.emit('message', {success: false, message: 'No ID.'});
             return;
         }
     }
@@ -94,10 +94,10 @@ exports.destroy = function(req, res) {
     collection.remove({_id: database.ObjectID(id)}, {w: 1}, function(err, removedDocs) {
         if (err) {
             console.log('Errors while removing document: ' + JSON.stringify(err));
-            res.jsonp({success: false, errors: err, message: 'Failed to destroy session (does it exist?).'})
+            io.sockets.emit('message', {success: false, errors: err, message: 'Failed to destroy session (does it exist?).'});
         } else {
             console.log('Removed record "' + id + '".');
-            res.jsonp({success: true, message: 'Successfully destroyed session.'})
+            io.sockets.emit('message', {success: true, message: 'Successfully destroyed session.'});
         }
     });
 };
