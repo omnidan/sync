@@ -30,6 +30,8 @@ exports.findById = function(data) {
     database.findOneById(collection, req.params.id, function(err, item) {
         return item;
     });
+    
+    return {};
 };
 
 exports.findAll = function(data) {
@@ -40,6 +42,8 @@ exports.findAll = function(data) {
     collection.find().toArray(function(err, items) {
         return items;
     });
+    
+    return {};
 };
 
 exports.create = function(data) {
@@ -53,9 +57,9 @@ exports.create = function(data) {
                 return {success: true, message: 'Successfully created new session.'};
             }
         });
-    } else {
-        return {success: false, message: 'No data.'};
     }
+    
+    return {success: false, message: 'No data.'};
 };
 
 exports.update = function(data) {
@@ -73,9 +77,9 @@ exports.update = function(data) {
                 return {success: true, message: 'Successfully updated session.'};
             }
         });
-    } else {
-        return {success: false, message: 'No data.'};
     }
+    
+    return {success: false, message: 'No data.'};
 };
 
 exports.destroy = function(data) {
@@ -92,4 +96,6 @@ exports.destroy = function(data) {
             return {success: true, message: 'Successfully destroyed session.'};
         }
     });
+    
+    return {success: false, message: 'Unknown error.'};
 };
