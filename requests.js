@@ -72,7 +72,7 @@ exports.update = function(data, emit) {
                 emit({type: 'message', data: {success: false, errors: err, message: 'Failed to update session (does it exist?).'}});
             } else {
                 console.log('Updated record "' + data.id + '".');
-                emit({type: 'message', data: {id: records[0]._id, success: true, message: 'Successfully updated session.'}});
+                emit({type: 'message', data: {id: data.id, success: true, message: 'Successfully updated session.'}});
             }
         });
         return;
