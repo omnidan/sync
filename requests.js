@@ -29,7 +29,7 @@ exports.findById = function(data, emit) {
     
     database.findOneById(collection, data.id, function(err, item) {
         if (err) {
-            emit({type: 'result', data: {});
+            emit({type: 'result', data: {}});
         } else {
             emit({type: 'result', data: item});
         }
