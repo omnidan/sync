@@ -1,12 +1,12 @@
 var database = require('./database');
 
 var collection;
-var db = database.createDB('sync', function(err, _collection) {
+var db = database.createDB('sessions', function(err, _collection) {
     if (err) {
         console.log('Errors while loading collection: ');
         console.log(err);
         console.log('Attempting to create collection...');
-        database.createCollection('session', function(err, col) {
+        database.createCollection('sessions', function(err, col) {
             if (err) {
                 console.log('Error!');
                 console.log(err);
@@ -44,8 +44,8 @@ exports.findAll = function(data, emit) {
 };
 
 exports.create = function(data, emit) {
-    if (data.data) {
-        collection.insert({data: data.data}, {safe: true}, function(err, records) {
+    if (data) {
+        collection.insert({data: data}, {safe: true}, function(err, records) {
             if (err) {
                 console.log('Errors while inserting document: ' + JSON.stringify(err));
                 emit({type: 'message', data: {success: false, errors: err, message: 'Failed to create new session.'}});
